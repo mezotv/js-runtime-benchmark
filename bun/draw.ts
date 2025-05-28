@@ -1,6 +1,6 @@
-import { createCanvas, CanvasRenderingContext2D } from "canvas";
+import { createCanvas, type CanvasRenderingContext2D } from "canvas";
 
-function drawSierpinskiIterative(
+function drawTriangle(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -54,7 +54,7 @@ export const createImage = (depth = 8) => {
   ctx.fillRect(0, 0, size, size);
   const centerX = size / 2;
   const topY = 0;
-  drawSierpinskiIterative(ctx, centerX, topY, size * 0.9, depth);
+  drawTriangle(ctx, centerX, topY, size * 0.9, depth);
 
   console.timeEnd("createImage");
   return canvas;
