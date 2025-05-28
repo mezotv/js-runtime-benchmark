@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Performance Comparison: Node.js vs Bun</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    canvas { max-width: 100%; height: 400px; }
+  </style>
+</head>
+<body>
+  <h1>Image Creation Time Comparison</h1>
+  <p>Lower is better (in milliseconds)</p>
+  <canvas id="performanceChart"></canvas>
+
+  <script>
+  const nodeData = [
+    233.152, 191.817, 197.015, 196.271, 199.369,
+    209.680, 218.774, 237.531, 257.121, 329.319,
+    508.692, 1079.0, 2589.0, 7252.0, 19428.0
+  ];
+
+  const bunData = [
+    265.87, 195.91, 232.50, 199.68, 200.90,
+    211.05, 209.54, 229.99, 247.68, 314.75,
+    493.42, 989.97, 2390.0, 6140.0, 16730.0
+  ];
+
+  const denoData = [
+  243, 200, 199, 221, 240,
+  226, 304, 302, 458, 715,
+  1558, 3937, 11180, 32604, 96756
+];
+
+  const labels = Array.from({length: Math.max(nodeData.length, bunData.length, denoData.length)}, (_, i) => `Image ${i + 1}`);
+
+  const ctx = document.getElementById('performanceChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Node.js',
+          data: nodeData,
+          borderWidth: 1,
+          fill: false,
+          tension: 0.1
+        },
+        {
+          label: 'Bun',
+          data: bunData,
+          borderWidth: 1,
+          fill: false,
+          tension: 0.1
+        },
+        {
+          label: 'Deno',
+          data: denoData,
+          borderWidth: 1,
+          fill: false,
+          tension: 0.1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          type: 'logarithmic',
+          title: {
+            display: true,
+            text: 'Time (ms, logarithmic scale)'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Image Number'
+          }
+        }
+      },
+      plugins: {
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        },
+        legend: {
+          position: 'top'
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
