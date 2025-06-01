@@ -47,27 +47,39 @@ func testTarget(target Target, maxDepth int, timeout time.Duration, results chan
 	for depth := 9; depth <= maxDepth; depth++ {
 		result := sendRequest(target, depth)
 		results <- result
+		fmt.Printf("Target: %s, Depth: %d, Status: %d, Latency: %v\n", target.Name, depth, result.Status, result.Latency)
 
 		if result.Status != 200 || result.Latency > timeout {
 			break
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
-	close(results)
 }
 
 func runSequentialTargets(targets []Target, maxDepth int, timeout time.Duration, cooldown time.Duration) {
 	for i, target := range targets {
-		results := make(chan Result, 10)
+		fmt.Printf("\nTesting %s...\n", target.Name)
+
+		// Create buffered channel with enough capacity for all possible results
+		results := make(chan Result, maxDepth-8) // from 9 to maxDepth
 		var wg sync.WaitGroup
 
 		wg.Add(1)
 		go testTarget(target, maxDepth, timeout, results, &wg)
 
-		wg.Wait()
+		// Start a goroutine to wait for the test to complete
+		done := make(chan struct{})
+		go func() {
+			wg.Wait()
+			close(done)
+			close(results)
+		}()
+
+		// Wait for completion
+		<-done
 
 		if i < len(targets)-1 {
-			fmt.Println("⏳ Cooling down before switching target...")
+			fmt.Printf("\n⏳ Cooling down for %v before switching target...\n", cooldown)
 			time.Sleep(cooldown)
 		}
 	}
