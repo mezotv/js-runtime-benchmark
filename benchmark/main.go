@@ -44,7 +44,7 @@ func sendRequest(target Target, depth int) Result {
 
 func testTarget(target Target, maxDepth int, timeout time.Duration, results chan<- Result, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for depth := 0; depth <= maxDepth; depth++ {
+	for depth := 9; depth <= maxDepth; depth++ {
 		result := sendRequest(target, depth)
 		results <- result
 
