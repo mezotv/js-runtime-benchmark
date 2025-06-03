@@ -44,7 +44,7 @@ func sendRequest(target Target, depth int) Result {
 
 func testTarget(target Target, maxDepth int, timeout time.Duration, results chan<- Result, wg *sync.WaitGroup) {
 	defer wg.Done()
-	for depth := 9; depth <= maxDepth; depth++ {
+	for depth := 0; depth <= maxDepth; depth++ {
 		result := sendRequest(target, depth)
 		results <- result
 		fmt.Printf("Target: %s, Depth: %d, Status: %d, Latency: %v\n", target.Name, depth, result.Status, result.Latency)
@@ -60,14 +60,12 @@ func runSequentialTargets(targets []Target, maxDepth int, timeout time.Duration,
 	for i, target := range targets {
 		fmt.Printf("\nTesting %s...\n", target.Name)
 
-		// Create buffered channel with enough capacity for all possible results
-		results := make(chan Result, maxDepth-8) // from 9 to maxDepth
+		results := make(chan Result, maxDepth)
 		var wg sync.WaitGroup
 
 		wg.Add(1)
 		go testTarget(target, maxDepth, timeout, results, &wg)
 
-		// Start a goroutine to wait for the test to complete
 		done := make(chan struct{})
 		go func() {
 			wg.Wait()
@@ -75,7 +73,6 @@ func runSequentialTargets(targets []Target, maxDepth int, timeout time.Duration,
 			close(results)
 		}()
 
-		// Wait for completion
 		<-done
 
 		if i < len(targets)-1 {
@@ -92,7 +89,7 @@ func main() {
 		{BaseURL: "http://localhost:3002/api/image/", Name: "Deno Service"},
 	}
 
-	maxDepth := 20
+	maxDepth := 13
 	timeout := 1000000000 * time.Millisecond
 	cooldown := 5 * time.Second
 
