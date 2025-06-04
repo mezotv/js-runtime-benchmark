@@ -1,97 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Performance Comparison: Node.js vs Bun</title>
+  <title>Node.js vs Bun vs Deno</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body { font-family: sans-serif; margin: 20px; }
-    canvas { max-width: 100%; height: 400px; }
+    canvas { max-width: 100%; height: 400px; margin-bottom: 50px; }
   </style>
 </head>
 <body>
-  <h1>Image Creation Time Comparison</h1>
-  <p>Lower is better (in milliseconds)</p>
+  <h1>Bild Generierungs Zeit Vergleich</h1>
+  <p>Niedriger ist besser (in Millisekunden)</p>
   <canvas id="performanceChart"></canvas>
 
+  <h1>RAM Nutzung Vergleich</h1>
+  <p>Niedriger ist besser (in Megabyte)</p>
+  <canvas id="ramChart"></canvas>
+
   <script>
-  const nodeData = [
-    233.152, 191.817, 197.015, 196.271, 199.369,
-    209.680, 218.774, 237.531, 257.121, 329.319,
-    508.692, 1079.0, 2589.0, 7252.0, 19428.0
-  ];
+    const labels = Array.from({length: 14}, (_, i) => `Tiefe ${i}`);
 
-  const bunData = [
-    265.87, 195.91, 232.50, 199.68, 200.90,
-    211.05, 209.54, 229.99, 247.68, 314.75,
-    493.42, 989.97, 2390.0, 6140.0, 16730.0
-  ];
+    const bunTime = [172.49, 252.94, 194.84, 294.33, 191.95, 215.76, 199.92, 220.33, 215.89, 243.78, 303.43, 469.18, 986.03, 2360.0];
+    const denoTime = [182, 161, 189, 186, 169, 224, 225, 256, 274, 654, 2271, 24645, 139740, 1589992];
+    const nodeTime = [203.14, 300.63, 237.93, 184.37, 194.07, 193.01, 223.34, 217.83, 223.83, 388.8, 2711, 8271, 144413, 1829284];
 
-  const denoData = [
-  243, 200, 199, 221, 240,
-  226, 304, 302, 458, 715,
-  1558, 3937, 11180, 32604, 96756
-];
+    const bunRAM = [3116.02, 4644.86, 4649.2, 5543.14, 6169.16, 6169.94, 6177.48, 6186.81, 6186.73, 6218.02, 4714.47, 4716.12, 4803.86, 4813.39];
+    const denoRAM = [1581.28, 3123.31, 3132.92, 4662.81, 4670.83, 3148.34, 3154.56, 3154.56, 3173.17, 3187.36, 3211.61, 1714.56, 1845.86, 2001.45, 2001.45];
+    const nodeRAM = [3231.89, 4149.19, 4759.58, 4763.69, 4768.06, 4776.59, 4780.12, 4787.62, 4790.09, 4798.22, 4815.81, 4850.78, 3353.75, 3481.81];
 
-  const labels = Array.from({length: Math.max(nodeData.length, bunData.length, denoData.length)}, (_, i) => `Image ${i + 1}`);
-
-  const ctx = document.getElementById('performanceChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Node.js',
-          data: nodeData,
-          borderWidth: 1,
-          fill: false,
-          tension: 0.1
-        },
-        {
-          label: 'Bun',
-          data: bunData,
-          borderWidth: 1,
-          fill: false,
-          tension: 0.1
-        },
-        {
-          label: 'Deno',
-          data: denoData,
-          borderWidth: 1,
-          fill: false,
-          tension: 0.1
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          type: 'logarithmic',
-          title: {
-            display: true,
-            text: 'Time (ms, logarithmic scale)'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Image Number'
-          }
-        }
+    new Chart(document.getElementById('performanceChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Deno', data: denoTime, borderWidth: 1, fill: false, tension: 0.1 },
+          { label: 'Node.js', data: nodeTime, borderWidth: 1, fill: false, tension: 0.1 },
+          { label: 'Bun', data: bunTime, borderWidth: 1, fill: false, tension: 0.1 },
+        ]
       },
-      plugins: {
-        tooltip: {
-          mode: 'index',
-          intersect: false
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            type: 'logarithmic',
+            title: { display: true, text: 'Zeit (ms)' }
+          },
+          x: {
+            title: { display: true, text: 'Tiefe' }
+          }
         },
-        legend: {
-          position: 'top'
+        plugins: {
+          tooltip: { mode: 'index', intersect: false },
+          legend: { position: 'top' }
         }
       }
-    }
-  });
-</script>
+    });
+
+    new Chart(document.getElementById('ramChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Node.js', data: nodeRAM, borderWidth: 1, fill: false, tension: 0.1 },
+          { label: 'Bun', data: bunRAM, borderWidth: 1, fill: false, tension: 0.1 },
+          { label: 'Deno', data: denoRAM, borderWidth: 1, fill: false, tension: 0.1 }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            title: { display: true, text: 'RAM (MB)' }
+          },
+          x: {
+            title: { display: true, text: 'Tiefe' }
+          }
+        },
+        plugins: {
+          tooltip: { mode: 'index', intersect: false },
+          legend: { position: 'top' }
+        }
+      }
+    });
+  </script>
 </body>
 </html>

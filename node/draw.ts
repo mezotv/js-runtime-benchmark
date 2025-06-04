@@ -45,7 +45,7 @@ function drawTriangle(
 
 export const createImage = (depth = 8) => {
   console.log("Tiefe:", depth);
-  console.log("Momentane Zeit", new Date().toISOString());
+  console.log("Start Zeit", new Date().toISOString());
   console.time("createImage");
 
   const size = 20000;
@@ -57,7 +57,7 @@ export const createImage = (depth = 8) => {
   const topY = 0;
   drawTriangle(ctx, centerX, topY, size * 0.9, depth);
 
-  console.log("Momentane Zeit:", new Date().toISOString());
+  console.log("End Zeit:", new Date().toISOString());
   console.timeEnd("createImage");
   return canvas;
 };

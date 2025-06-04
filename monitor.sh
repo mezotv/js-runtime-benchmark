@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration bun / deno / node
-PROCESSES=("18892" "18374" "18827")  # Change these to your processes
+PROCESSES=("82873" "83187" "83600")  # Change these to your processes
 CSV_FILE="ram_monitor.csv"
 INTERVAL=5  # seconds between checks
 

@@ -84,8 +84,8 @@ func runSequentialTargets(targets []Target, maxDepth int, timeout time.Duration,
 
 func main() {
 	targets := []Target{
-		{BaseURL: "http://localhost:3000/api/image/", Name: "Bun Service"},
-		{BaseURL: "http://localhost:3001/api/image/", Name: "Node Service"},
+		//{BaseURL: "http://localhost:3000/api/image/", Name: "Bun Service"},
+		//{BaseURL: "http://localhost:3001/api/image/", Name: "Node Service"},
 		{BaseURL: "http://localhost:3002/api/image/", Name: "Deno Service"},
 	}
 
